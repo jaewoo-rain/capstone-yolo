@@ -1,12 +1,13 @@
 import cv2
 import os
 import time
+import threading
 from roboflow import Roboflow
 from dotenv import load_dotenv
 
 """
 실행하면 웹캠이 열림
-Space 키 → 프레임 캡처 + Roboflow 자동 업로드
+Space 키 → 프레임 캡처 + Roboflow 자동 업로드 (백그라운드)
 Q 키 → 종료
 """
 
@@ -23,6 +24,17 @@ project = rf.workspace(WORKSPACE).project(PROJECT)
 
 cap = cv2.VideoCapture(0)
 count = 0
+lock = threading.Lock()
+
+def upload(filename):
+    global count
+    try:
+        project.upload(filename)
+        with lock:
+            count += 1
+        print(f"Roboflow 업로드 완료 ({count}장)")
+    except Exception as e:
+        print(f"업로드 실패: {e}")
 
 print("Space: 캡처 & 업로드 | Q: 종료")
 
@@ -40,13 +52,7 @@ while True:
         filename = f"{SAVE_DIR}/capture_{int(time.time())}.jpg"
         cv2.imwrite(filename, frame)
         print(f"저장: {filename}")
-
-        try:
-            project.upload(filename)
-            print(f"Roboflow 업로드 완료 ({count + 1}장)")
-            count += 1
-        except Exception as e:
-            print(f"업로드 실패: {e}")
+        threading.Thread(target=upload, args=(filename,), daemon=True).start()
 
     elif key == ord('q'):
         break
