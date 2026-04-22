@@ -1,0 +1,12 @@
+train: C:/Users/jaewoo/Desktop/coding/yolo/test1/train/images
+val: C:/Users/jaewoo/Desktop/coding/yolo/test1/train/images
+
+nc: 2
+names: ['case', 'test1']
+
+# roboflow:
+#   workspace: s-workspace-lioea
+#   project: s-workspace-lioea
+#   version: dataset
+#   license: Private
+#   url: https://app.roboflow.com/s-workspace-lioea/s-workspace-lioea/dataset

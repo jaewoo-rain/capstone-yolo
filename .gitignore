@@ -1,0 +1,6 @@
+.env
+runs/
+captured_images/
+__pycache__/
+*.pt
+*.pyc
